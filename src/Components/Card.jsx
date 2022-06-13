@@ -1,10 +1,12 @@
-import React from 'react'
-import { TiWeatherSunny } from 'react-icons/ti';
+import React, { useState,useEffect } from 'react'
+import { TiWeatherSunny,TiWeatherCloudy,TiWeatherSnow } from 'react-icons/ti';
 import {WiSunset} from 'react-icons/wi'
 import {BsFillCloudRainFill, BsSpeedometer} from 'react-icons/bs'
 import {AiOutlineCompress} from 'react-icons/ai'
 
 const Card = (props) => {
+  const [weatherState,setWeatherState] = useState(0)
+  // const array = [TiWeatherSunny,TiWeatherCloudy,TiWeatherSnow]
     const { temp,
         humidity,
         pressure,
@@ -13,6 +15,28 @@ const Card = (props) => {
         speed,
         country,
         sunset,} = props.tempInfo
+
+         useEffect(() => {
+           if(mood){
+               switch (mood) {
+                case "Clouds": setWeatherState(0)
+                  
+                  break;
+                  case "Haze": setWeatherState(1)
+                  
+                  break;
+                  case "Clear": setWeatherState(2)
+                  
+                  break;
+               
+                default:
+                  setWeatherState(2)
+                  break;
+               }
+           }
+          
+         }, [mood])
+         
         let sec = sunset;
         let date = new Date(sec*1000)
         let timeStr = `${date.getHours()}:${date.getMinutes()}`
@@ -20,7 +44,12 @@ const Card = (props) => {
      <>
           <article className='widget'>
             <div className='weatherIcon'>
-              <TiWeatherSunny/>
+              {
+                weatherState == 0? <TiWeatherSunny/> : <TiWeatherCloudy/>
+                
+              }
+             
+              
             </div>
             <div className='weatherInfo'>
                 <div className='temperature'>

@@ -3,18 +3,64 @@ import './style.css'
 import Card from './Card';
 
 const Weather = () => {
-    const [searchValue,setSearchVslue] = useState([26.139699,85.8963273])
+    // const [searchValue,setSearchVslue] = useState([])
+    // const[searchData,setSearchData] = useState([])
+    const[data,setData] = useState([])
+    const[savedata,setSaveData] = useState([])
     const [tempInfo,setTempInfo] = useState({})
-    const change = (e) =>{
-        setSearchVslue([...searchValue,e.target.value])
+    const [value,setValue] = useState(0)
+    const[place,setPlace] = useState('Enter city name')
+    // const change = (e) =>{
+    //     setSearchVslue([e.target.value])
+        
+    // }
+    const cord = (e) => {
+        setData([e.target.value])
+      
+
     }
-    let [lat,lon]   =searchValue
+    // let [lat,lon]   =searchData
+    let lati;
+    let loni;
     // console.log(lat)
     // console.log(lon)
+    let [city,state,country] = savedata
+    // console.log(city)
+    // console.log(state)
+    // console.log(country)
+    // let a  = 0;
+    lati = 26.1397;
+    loni = 85.8963;
+  
+    
+
+    const getCordinate = async () => {
+        try{
+            let url = `http://api.openweathermap.org/geo/1.0/direct?q=${city},${state},${country}&appid=4e819bf5356a264e9da719a57b6056f5`;
+            
+            const res = await fetch(url)
+            const data = await res.json();
+
+            console.log(data)
+            let[Data] =data
+            let{lat,lon} =Data
+            lati = lat;
+            loni = lon;
+            
+        } catch (error){
+            console.log(error)
+
+        }
+    }
+    console.log(lati)
+    console.log(loni)
+
+
+
 
     const getWeatherInfoo = async () => {
         try {
-            let url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=4e819bf5356a264e9da719a57b6056f5`;
+            let url = `https://api.openweathermap.org/data/2.5/weather?lat=${lati}&lon=${loni}&units=metric&appid=4e819bf5356a264e9da719a57b6056f5`;
 
             const res = await fetch(url);
             const data = await res.json();
@@ -47,17 +93,45 @@ const Weather = () => {
     }
     useEffect(() => {
         getWeatherInfoo();
+        // getCordinate();
 
     },[])
+    // const func = () => {
+    //     getWeatherInfoo()
+    //     getCordinate()
+    // }
+
   
   return (
      <>
         <div className='wrap'>
-            <div className='search'>
-                <input type={"search"} placeholder = "search..." autoFocus id='search' className='searchTerm' value={searchValue} onChange = {change}/>
-                <button className='searchButton' type='button' onClick={getWeatherInfoo} >Search</button>
+          <div className='search'>
+            <input type={"text"} placeholder = {place} id='search' className='searchTerm' value={data} onChange = {cord}/>
+                <button className='searchButton' type='button' onClick={() => {
+                    setSaveData([...savedata,...data])
+                    // console.log(savedata)
+                    setData([])
+                  setValue(value+1)
+        // value === 1 ?   setPlace("Enter Country code (e.g- +91)")  : setPlace("Enter state code (e.g- BR,DL,MU)")
+         if(value == 0){
+            setPlace("Enter state code (e.g- BR,DL,MU)")
+         }else if (value == 1){
+            setPlace("Enter Country code (e.g- +91)")
+         }else{
+            setPlace("Now double click the search :)")
+         }
+         
+      
+             
+                
+                    
+                  
+                }} >+</button>
+                <button className='searchButton' type='button' onClick={getCordinate} onDoubleClick = {getWeatherInfoo} >Search</button>
+                
 
-            </div>
+          </div>
+            
         </div>
         {/* our temp card */}
         <Card tempInfo = {tempInfo}/>
